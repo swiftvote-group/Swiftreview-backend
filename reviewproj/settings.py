@@ -31,7 +31,8 @@ INSTALLED_APPS = [
 
     # myapps
     "account.apps.AccountConfig",
-    "mainapp.apps.AccountConfig",
+    "mainapp.apps.MainappConfig",
+    "relatedapp.apps.RelatedappConfig",
 
     # Thirdpartyapp
     "rest_framework",
