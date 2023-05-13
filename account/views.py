@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import CustomUser, Profile
-from .serializers import StaffSignSerializer, StudentSignSerializer, ParentSignSerializer
+from .serializers import StaffSignSerializer, StudentSignSerializer, ParentSignSerializer,ProfileSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
@@ -40,6 +40,11 @@ class ParentAccountViewset(viewsets.ModelViewSet):
         parents=CustomUser.objects.filter(is_parent=True)
         serializer=self.serializer_class(parents, many=True)
         return Response({"details":serializer.data}, status=status.HTTP_200_OK)
+
+class UsersAcoountProfileViewset(viewsets.ModelViewSet):
+    queryset=Profile.objects.all()
+    serializer_class=ProfileSerializer
+    # permission_classes=[permissions.IsAuthenticatedOrReadOnly]
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

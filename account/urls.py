@@ -12,6 +12,7 @@ router=SimpleRouter()
 router.register('student/account', views.StudentAccountViewset)
 router.register('staff/account', views.StaffAccountViewset)
 router.register('parent/account', views.ParentAccountViewset)
+router.register('profile/account', views.UsersAcoountProfileViewset)
 schema_view = get_schema_view(
    openapi.Info(
       title="swiftreview Backend API",

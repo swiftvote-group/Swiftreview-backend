@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Profile
 
 
 class StudentSignSerializer(serializers.ModelSerializer):
@@ -58,5 +58,14 @@ class ParentSignSerializer(serializers.ModelSerializer):
             user.set_password(validate_data["password"])
             user.save()
             return user
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Profile
+        fields=["id","user","institution","faculty","department","level",
+            "file_proof", "phone_number","location" ,"birth_date","linkedln",
+              "twitter","bio","profile_image" ]
+        extra_kwargs={"file_proof":{"write_only":True},"id":{"read_only":True}}
+
 
                                             
