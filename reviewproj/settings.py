@@ -16,7 +16,7 @@ SECRET_KEY = config("SECRET_KEY",default='^4-737n**(f#lssg_(7zav%dg7@k=$76!ry%zb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["swiftreview.pythonanywhere.com"]
+ALLOWED_HOSTS = ["swiftreview.pythonanywhere.com",'127.0.0.1']
 
 
 # Application definition
