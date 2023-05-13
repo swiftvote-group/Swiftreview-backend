@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework import status
 from .serializers import InstitutionRewiewSerializer, InstitutionProfileSerializer
 from .models import Review, InstitutionProfile
 from rest_framework import viewsets
@@ -12,3 +14,4 @@ class InstitutionProfileViewset(viewsets.ModelViewSet):
 class InstitutionReviewViewset(viewsets.ModelViewSet):
     queryset=Review.objects.all()
     serializer_class=InstitutionRewiewSerializer
+
