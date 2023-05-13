@@ -10,8 +10,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 router=SimpleRouter()
 router.register('institution', views.InstitutionViewset)
-router.register('institution/faculty', views.FacultyViewset)
-router.register('institution/department', views.DepartmentViewset)
+router.register('faculty', views.FacultyViewset)
+router.register('department', views.DepartmentViewset)
 
 urlpatterns=[
     
