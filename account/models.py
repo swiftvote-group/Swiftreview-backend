@@ -112,7 +112,7 @@ class Profile(models.Model):
 
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     institution=models.ForeignKey(Institution,  on_delete=models.CASCADE,blank=True,null=True)
-    faculty=models.ForeignKey(Faculty,  on_delete=models.CASCADE,blank=True)
+    faculty=models.ForeignKey(Faculty,  on_delete=models.CASCADE,blank=True, null=True)
     department=models.ForeignKey(Department,  on_delete=models.CASCADE,blank=True, null=True)
     level=models.CharField(max_length=200, choices=levels,null=True)
     file_proof=models.FileField(upload_to='Users_file_proofs/', blank=True,null=True)
