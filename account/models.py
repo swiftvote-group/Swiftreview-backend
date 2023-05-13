@@ -111,18 +111,18 @@ class Profile(models.Model):
     ]
 
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    institution=models.ForeignKey(Institution,  on_delete=models.CASCADE)
-    faculty=models.ForeignKey(Faculty,  on_delete=models.CASCADE)
-    department=models.ForeignKey(Department,  on_delete=models.CASCADE)
-    level=models.CharField(max_length=200, choices=levels)
-    file_proof=models.FileField(upload_to='Users_file_proofs/', blank=True)
-    phone_number=models.CharField(max_length=15)
-    location = models.CharField(max_length=30, blank=True)
+    institution=models.ForeignKey(Institution,  on_delete=models.CASCADE,blank=True,null=True)
+    faculty=models.ForeignKey(Faculty,  on_delete=models.CASCADE,blank=True)
+    department=models.ForeignKey(Department,  on_delete=models.CASCADE,blank=True, null=True)
+    level=models.CharField(max_length=200, choices=levels,null=True)
+    file_proof=models.FileField(upload_to='Users_file_proofs/', blank=True,null=True)
+    phone_number=models.CharField(max_length=15,null=True)
+    location = models.CharField(max_length=30, blank=True,null=True)
     birth_date = models.DateField(null=True, blank=True)
-    linkedln=models.URLField(blank=True)
-    twitter=models.URLField(blank=True)
-    bio = models.TextField(max_length=500, blank=True)
-    profile_image = models.ImageField(upload_to='profile_images/', blank=True)
+    linkedln=models.URLField(blank=True,null=True)
+    twitter=models.URLField(blank=True,null=True)
+    bio = models.TextField(max_length=500, blank=True,null=True)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True,null=True)
     def __str__(self):
         """Return string representation of the user's profile"""
         return self.user.username + "'s Profile"

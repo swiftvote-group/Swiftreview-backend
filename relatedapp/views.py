@@ -4,12 +4,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import InstitutionSerializer, FacultySerializer, DepartmentSerializer
 from .models import  Institution, Faculty, Department
+from rest_framework import permissions
 # Create your views here.
 
 
 class InstitutionViewset(viewsets.ModelViewSet):
     queryset=Institution.objects.all()
     serializer_class=InstitutionSerializer
+    permission_classes=[permissions.IsAuthenticated]
+    
 
     def create(self, request, *args, **kwargs):
         serializer=self.get_serializer(data=request.data)
@@ -26,7 +29,9 @@ class InstitutionViewset(viewsets.ModelViewSet):
 class FacultyViewset(viewsets.ModelViewSet):
     queryset=Faculty.objects.all()
     serializer_class=FacultySerializer
+    permission_classes=[permissions.IsAuthenticated]
 
 class DepartmentViewset(viewsets.ModelViewSet):
     queryset=Department.objects.all()
     serializer_class=DepartmentSerializer
+    permission_classes=[permissions.IsAuthenticated]
