@@ -48,7 +48,7 @@ class InstitutionProfile(models.Model):
 
 
     def __str__(self):
-        return f"{self.institution.school_mame}'s profile"
+        return f"{self.institution.school_name}'s profile"
 
 
 class Review(models.Model):

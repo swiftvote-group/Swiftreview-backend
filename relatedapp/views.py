@@ -16,11 +16,14 @@ class InstitutionViewset(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer=self.get_serializer(data=request.data)
+        print(serializer)
         serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
         try:
+            print("Hello")
             self.perform_create(serializer)
         except:
-            return Response({"deatil":"Institution with this name already exist"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"details":"Institution with this name already exist"}, status=status.HTTP_400_BAD_REQUEST) 
         headers = self.get_success_headers(serializer.data)
         response_data = serializer.data
 
