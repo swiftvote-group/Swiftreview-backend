@@ -128,3 +128,9 @@ class Profile(models.Model):
         return self.user.username + "'s Profile"
     
 
+class ResetToken(models.Model):
+    user=models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    token=models.CharField(max_length=50)
+    expiration_date=models.DateTimeField
+    expired=models.BooleanField(default=True)
+

@@ -17,4 +17,7 @@ urlpatterns=[
     path("token/", views.CustomTokenObtain.as_view(), name="token"),
     path("token/refresh/", TokenRefreshView.as_view(), name="refresh-token"),
     
+    # Reset user password
+    path("request-password-reset/", views.SendUserPasswordToken.as_view()),
+	path("changepassword/<uidb64>/<token>/", views.ChangeUserPassword.as_view()),
 ]+router.urls

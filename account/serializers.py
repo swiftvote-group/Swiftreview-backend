@@ -67,5 +67,10 @@ class ProfileSerializer(serializers.ModelSerializer):
               "twitter","bio","profile_image" ]
         extra_kwargs={"file_proof":{"write_only":True},"id":{"read_only":True}}
 
+class RequestPasswordTokenSerializer(serializers.Serializer):
+	email=serializers.EmailField()
+
+class NewPasswordSerializer(serializers.Serializer):
+	new_password=serializers.CharField(max_length=100)
 
                                             
