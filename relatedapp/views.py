@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework import status
-from .serializers import InstitutionSerializer, FacultySerializer, DepartmentSerializer
-from .models import  Institution, Faculty, Department
+from rest_framework import status, generics
+from .serializers import InstitutionSerializer, FacultySerializer, DepartmentSerializer,NewsletterSerializer
+from .models import  Institution, Faculty, Department, Newsletter
 from rest_framework import permissions
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 # Create your views here.
 
 
@@ -38,3 +40,41 @@ class DepartmentViewset(viewsets.ModelViewSet):
     queryset=Department.objects.all()
     serializer_class=DepartmentSerializer
     permission_classes=[permissions.IsAuthenticated]
+
+
+# Allow users subscribe to newsletter
+
+class NewletterView(generics.GenericAPIView):
+
+    def post(self, request, *args, **kwargs):
+
+        email=request.data["email"]
+        print(email, "test")
+        Newsletter.objects.all().delete()
+        try:
+            Newsletter.objects.create(email=email)
+        except:
+            return Response({"detail":"Already a subscriber !!"}, status=status.HTTP_400_BAD_REQUEST)
+        subject="Welcome to SEGNAU newsletter"
+        # Render the HTML template using the user's email and name
+        html_content = render_to_string('newletter_subscibe.html', {'email': email})
+
+        # Create the EmailMultiAlternatives object
+        email_message = EmailMultiAlternatives(subject=subject,
+            from_email="nwaforglory6@gmail.com",
+            to=[email],
+        )
+        # Attach the HTML content to the email message
+        email_message.attach_alternative(html_content, "text/html")
+        # Send the email
+        email_message.send()
+        return Response({"detail":"Thank you for subscribing."}, status=status.HTTP_200_OK)
+
+class SubscribersList(generics.ListAPIView):
+    queryset=Newsletter.objects.all()
+    serializer_class=NewsletterSerializer
+
+    # Get list of all subscribers
+    def get(self, request, *args, **kwargs):
+        serializer=self.serializer_class(self.get_queryset(), many=True)
+        return Response({"details":serializer.data},status=status.HTTP_200_OK)
