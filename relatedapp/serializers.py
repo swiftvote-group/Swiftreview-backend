@@ -20,3 +20,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
         model=Department
         fields=["faculty", "name_of_dept", "id"]
         extra_kwargs={"id":{"read_only":True}}
+
+class NewsletterSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+   

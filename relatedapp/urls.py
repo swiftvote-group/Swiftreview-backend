@@ -14,5 +14,6 @@ router.register('faculty', views.FacultyViewset)
 router.register('department', views.DepartmentViewset)
 
 urlpatterns=[
-    
+    path('subscribe/', views.NewletterView.as_view()),
+    path("subscriber_list/", views.SubscribersList.as_view()),
 ]+router.urls

@@ -28,3 +28,9 @@ class Department(models.Model):
 
     def __str__(self):
         return self.name_of_dept
+
+class Newsletter(models.Model):
+    email=models.EmailField(unique=True)
+    
+    def __str__(self):
+        return self.email
