@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import CustomUser, Profile
+from .models import CustomUser, Profile, ResetToken
 from .serializers import StaffSignSerializer, StudentSignSerializer, ParentSignSerializer,ProfileSerializer
 from rest_framework import status, generics
 from rest_framework.response import Response
@@ -17,6 +17,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from .tokens import account_activation_token   
 from django.core.mail import send_mail, BadHeaderError
 from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth import get_user_model
 from django.http import Http404
@@ -76,65 +77,49 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token["email"] = user.email
 
         return token
-
-
 class CustomTokenObtain(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+class SendUserPasswordToken(generics.GenericAPIView):
+	# serializer_class=RequestPasswordTokenSerializer
 
-# view for the password change
-class SendUserPasswordToken(generics.CreateAPIView):
-    serializer_class = RequestPasswordTokenSerializer
+	def post(self, request, *args, **kwargs):
+		email=request.data['email']
+		try:
+			user=CustomUser.objects.get(email=email)
+		except:
+			return Response({"error":"User with this email does not exist !"},status=status.HTTP_404_NOT_FOUND)
+		if user.is_active:
+			uid=urlsafe_base64_encode(force_bytes(user.pk))
+			token=account_activation_token.make_token(user)
+			ResetToken.objects.filter(user=user).delete() #Get users previous token and delete
+			ResetToken.objects.create(user=user, token=token)
+			subject="Passoword Reset Email"
+			html_content = render_to_string('changepassword.html', {'name': user.first_name})
+			msg= EmailMultiAlternatives(subject, 'password@swiftreview.com',[email])
+			msg.attach_alternative(html_content, "text/html")
+			msg.send()
+			return Response({"success":"Reset link sent check your mail","token":token, "uuid":uid})
+			
+		else:
+			return Response({"error":"Your account is not activated yet so you cannot change your poassword"},status=status.HTTP_403_FORBIDDEN)
 
-    def post(self, request, *args, **kwargs):
-        email = request.data.get('email')
-        try:
-            user = User.objects.get(email=email, is_active=True)
-        except User.DoesNotExist:
-            return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+class ChangeUserPassword(generics.CreateAPIView):
+	
+	def post(self,request, *args, **kwargs):
+		uidb64=request.data["uidb64"]
+		token=request.data["token"]
+		new_password= request.data["new_password"]
 
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = account_activation_token.make_token(user)
-        # Create user's token
-        expiration_date = datetime.now() + timedelta(minutes=5) 
-        ResetToken.objects.create(user=user, token=token, expiration_date=expiration_date)
-
-        # subject = 'Password Reset'
-        # message = f'Hi {user.username}, click on this link to reset your password: {uid}/{token}'
-        # from_email = 'noreply@agro360.com'
-        # recipient_list = [email]
-
-        # send_mail(subject, message, from_email, recipient_list)
-
-        return Response({'success': 'Password reset link sent. Please check your email. Link expires in 5mins'}, status=status.HTTP_200_OK)
-
-class ChangeUserPassword(generics.GenericAPIView):
-    serializer_class=NewPasswordSerializer
-        
-    def get_object(self, uidb64):
-        try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
-            return User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            raise Http404
-
-    def post(self, request, *args, **kwargs):
-        uidb64 = self.kwargs["uidb64"]
-        token = self.kwargs["token"]
-        new_password = request.data["new_password"]
-        user = self.get_object(uidb64)
-        print(user, "users")
-        try:
-            reset_token=ResetToken.objects.get(user=user)
-        except:
-            return Response({"details":"Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
-        if account_activation_token.check_token(user, token):
-            if timezone.now() <= reset_token.expiration_date:
-                print(timezone.now())
-                print(reset_token.expiration_date)
-                user.set_password(new_password)
-                user.save()
-                reset_token.delete()
-                return Response({"success": "Password changed successfully."})
-            return Response({"details": "Token Expired"},status=status.HTTP_400_BAD_REQUEST)
-        return Response({"error": "Unable to change password due to incorrect token."}, status=status.HTTP_400_BAD_REQUEST)
+		try:
+			uid=force_str(urlsafe_base64_decode(uidb64))
+			user=CustomUser.objects.get(pk=uid)
+		except(TypeError, ValueError, OverflowError):
+			user=None
+		if user is not None and account_activation_token.check_token(user, token):
+			user.set_password(new_password)
+			user.save()
+            # Delete the user's token
+			ResetToken.objects.filter(user=user).delete()
+			return Response({"success":"Passowrd change successfully"})
+		return Response({"error":"Unable to chnage password due to incorrect token"},status=status.HTTP_403_FORBIDDEN)	

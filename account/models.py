@@ -131,6 +131,6 @@ class Profile(models.Model):
 class ResetToken(models.Model):
     user=models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     token=models.CharField(max_length=50)
-    expiration_date=models.DateTimeField
-    expired=models.BooleanField(default=True)
+    # expiration_date=models.DateTimeField
+    expired=models.BooleanField(default=False)
 
