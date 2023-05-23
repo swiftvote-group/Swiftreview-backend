@@ -33,7 +33,15 @@ class StudentAccountViewset(viewsets.ModelViewSet):
     queryset=CustomUser.objects.all()
     serializer_class=StaffSignSerializer
     # permission_classes=[permissions.IsAuthenticatedOrReadOnly]
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
 
+        return [permission() for permission in permission_classes]
     def list(self,request, *args, **kwargs):
         print("In the studentlist")
         students=CustomUser.objects.filter(is_student=True)
@@ -45,6 +53,16 @@ class StaffAccountViewset(viewsets.ModelViewSet):
     queryset=CustomUser.objects.all()
     serializer_class=StudentSignSerializer
 
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
+
+        return [permission() for permission in permission_classes]
+
     def list(self,request, *args, **kwargs):
         print("In the stafflist")
         staffs=CustomUser.objects.filter(is_staff=True)
@@ -55,6 +73,15 @@ class ParentAccountViewset(viewsets.ModelViewSet):
     queryset=CustomUser.objects.all()
     serializer_class=ParentSignSerializer
 
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
+
+        return [permission() for permission in permission_classes]
     def list(self,request, *args, **kwargs):
         print("In the parentslist")
         parents=CustomUser.objects.filter(is_parent=True)
@@ -64,7 +91,7 @@ class ParentAccountViewset(viewsets.ModelViewSet):
 class UsersAcoountProfileViewset(viewsets.ModelViewSet):
     queryset=Profile.objects.all()
     serializer_class=ProfileSerializer
-    # permission_classes=[permissions.IsAuthenticatedOrReadOnly]
+    permission_classes=[permissions.IsAuthenticatedOrReadOnly]
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -80,8 +107,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class CustomTokenObtain(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
-class SendUserPasswordToken(generics.GenericAPIView):
-	# serializer_class=RequestPasswordTokenSerializer
+class SendUserPasswordToken(generics.CreateAPIView):
+	serializer_class=RequestPasswordTokenSerializer
 
 	def post(self, request, *args, **kwargs):
 		email=request.data['email']
@@ -105,7 +132,7 @@ class SendUserPasswordToken(generics.GenericAPIView):
 			return Response({"error":"Your account is not activated yet so you cannot change your poassword"},status=status.HTTP_403_FORBIDDEN)
 
 class ChangeUserPassword(generics.CreateAPIView):
-	
+	serializer_class=NewPasswordSerializer
 	def post(self,request, *args, **kwargs):
 		uidb64=request.data["uidb64"]
 		token=request.data["token"]

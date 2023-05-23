@@ -45,7 +45,7 @@ class DepartmentViewset(viewsets.ModelViewSet):
 # Allow users subscribe to newsletter
 
 class NewletterView(generics.GenericAPIView):
-
+    serializer_class=NewsletterSerializer
     def post(self, request, *args, **kwargs):
 
         email=request.data["email"]
