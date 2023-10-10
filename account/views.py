@@ -48,6 +48,17 @@ class StudentAccountViewset(viewsets.ModelViewSet):
         serializer=self.serializer_class(students, many=True)
         return Response({"details":serializer.data}, status=status.HTTP_200_OK)
 
+    def create(self, request):
+        serializer=self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            instance=serializer.save()
+            
+            instance.set_password(request.data["password"])
+            instance.is_student=True
+            instance.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         
 class StaffAccountViewset(viewsets.ModelViewSet):
     queryset=CustomUser.objects.all()
@@ -69,6 +80,16 @@ class StaffAccountViewset(viewsets.ModelViewSet):
         serializer=self.serializer_class(staffs, many=True)
         return Response({"details":serializer.data}, status=status.HTTP_200_OK)
 
+    def create(self, request):
+        serializer=self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            instance=serializer.save()
+            
+            instance.set_password(request.data["password"])
+            instance.is_sch_staff=True
+            instance.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ParentAccountViewset(viewsets.ModelViewSet):
     queryset=CustomUser.objects.all()
     serializer_class=ParentSignSerializer
@@ -87,7 +108,17 @@ class ParentAccountViewset(viewsets.ModelViewSet):
         parents=CustomUser.objects.filter(is_parent=True)
         serializer=self.serializer_class(parents, many=True)
         return Response({"details":serializer.data}, status=status.HTTP_200_OK)
-
+    
+    def create(self, request):
+        serializer=self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            instance=serializer.save()
+            
+            instance.set_password(request.data["password"])
+            instance.is_parent=True
+            instance.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class UsersAcoountProfileViewset(viewsets.ModelViewSet):
     queryset=Profile.objects.all()
     serializer_class=ProfileSerializer

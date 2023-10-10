@@ -93,6 +93,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    @property
+    def profile_id(self):
+        profile=Profile.objects.get(user=self)
+        return self.profile.id
     
 
 class Profile(models.Model):

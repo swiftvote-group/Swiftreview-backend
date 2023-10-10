@@ -23,7 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("v1/account/", include("account.urls")),
     path("v1/schools/", include("relatedapp.urls")),
-    path("v1/", include("mainapp.urls"),)
+    path("v1/", include("mainapp.urls")),
+    # path("api/v1/", include("mvp.urls"))
 ]
 if settings.DEBUG:
     urlpatterns +=static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

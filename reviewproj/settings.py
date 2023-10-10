@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "account.apps.AccountConfig",
     "mainapp.apps.MainappConfig",
     "relatedapp.apps.RelatedappConfig",
+    'mvp',
 
     # Thirdpartyapp
     "rest_framework",
