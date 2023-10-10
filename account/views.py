@@ -122,7 +122,17 @@ class ParentAccountViewset(viewsets.ModelViewSet):
 class UsersAcoountProfileViewset(viewsets.ModelViewSet):
     queryset=Profile.objects.all()
     serializer_class=ProfileSerializer
-    permission_classes=[permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes=[permissions.IsAuthenticatedOrReadOnly]
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
+
+        return [permission() for permission in permission_classes]
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

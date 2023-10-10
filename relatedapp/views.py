@@ -13,7 +13,17 @@ from django.template.loader import render_to_string
 class InstitutionViewset(viewsets.ModelViewSet):
     queryset=Institution.objects.all()
     serializer_class=InstitutionSerializer
-    permission_classes=[permissions.IsAuthenticated]
+    # permission_classes=[permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
+
+        return [permission() for permission in permission_classes]
     
 
     def create(self, request, *args, **kwargs):
@@ -34,12 +44,32 @@ class InstitutionViewset(viewsets.ModelViewSet):
 class FacultyViewset(viewsets.ModelViewSet):
     queryset=Faculty.objects.all()
     serializer_class=FacultySerializer
-    permission_classes=[permissions.IsAuthenticated]
+    # permission_classes=[permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
+
+        return [permission() for permission in permission_classes]
 
 class DepartmentViewset(viewsets.ModelViewSet):
     queryset=Department.objects.all()
     serializer_class=DepartmentSerializer
-    permission_classes=[permissions.IsAuthenticated]
+    # permission_classes=[permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
+
+        return [permission() for permission in permission_classes]
 
 
 # Allow users subscribe to newsletter

@@ -12,17 +12,47 @@ from rest_framework.generics import GenericAPIView
 class InstitutionProfileViewset(viewsets.ModelViewSet):
     queryset=InstitutionProfile.objects.all()
     serializer_class=InstitutionProfileSerializer
-    permission_classes=[permissions.IsAuthenticated]
+    # permission_classes=[permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
+
+        return [permission() for permission in permission_classes]
 
 class InstitutionReviewViewset(viewsets.ModelViewSet):
     queryset=Review.objects.all()
     serializer_class=InstitutionRewiewSerializer
-    permission_classes=[permissions.IsAuthenticated]
+    # permission_classes=[permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
+
+        return [permission() for permission in permission_classes]
 
 class MVPRewiew(GenericAPIView):
     queryset=Review.objects.all()
     serializer_class=MVPRewiewSerializer
-    permission_classes=[permissions.IsAuthenticated]
+    # permission_classes=[permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Apply custom permission classes for update and delete actions
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            # Use default permissions for other actions
+            permission_classes = [permissions.AllowAny]
+
+        return [permission() for permission in permission_classes]
 
     def get(self, request):
         reviews=Review.objects.all()
